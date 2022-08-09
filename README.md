@@ -8,13 +8,6 @@ In addition, this package supports unit testing, interfaces, and scoped containe
 
 I have been using this pattern in Unity with minimal changes for more than 6 years, in multiple small to medium-sized codebases (400k+ lines, 1-10 developers). It's stupid simple to understand and works great for teams.
 
-1. [Get Started](#get-started)
-2. [MonoBehaviours](#MonoBehaviours)
-3. [Pure C#](#Pure_C#)
-4. [Installer](Installer)
-5. [Examples](Examples)
-6. [Pull Requests](Pull-Requests)
-
 ---
 
 ## Get Started
