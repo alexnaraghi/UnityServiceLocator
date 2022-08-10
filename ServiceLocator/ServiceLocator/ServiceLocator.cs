@@ -37,11 +37,11 @@ public class ServiceLocator : MonoBehaviour
     public bool TryGetComponent(Type t, out Component component)
     {
         if (t.IsSubclassOf(typeof(Component))
-	{
-	    return _serviceBindings.TryGetValue(t, out component);
-	}
-	component = null;
-	return false;
+        {
+            return _serviceBindings.TryGetValue(t, out component);
+        }
+        component = null;
+        return false;
     }
 
     /// <summary>
