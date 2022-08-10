@@ -27,14 +27,19 @@ public class ServiceLocator : MonoBehaviour
 
     public object Get(Type t)
     {
-        object concreteObject = null;
+        object instance = null;
+        _serviceBindings.TryGetValue(t, out instance);
 
-        if (_serviceBindings.ContainsKey(t))
+        return instance;
+    }
+
+    public void DestroyComponentService(Type t)
+    {
+        object instance;
+        if (t.IsSubclassOf(typeof(Component)) && _serviceBindings.TryGetValue(t, out instance))
         {
-            concreteObject = _serviceBindings[t];
+            Destroy((Component)instance);
         }
-
-        return concreteObject;
     }
 
     /// <summary>
@@ -89,7 +94,7 @@ public class ServiceLocator : MonoBehaviour
     {
         Remove(typeof(T));
     }
-    
+
     /// <summary>
     /// Unregisters a type but does not destroy it.
     /// Does nothing if the type isn't registered.
@@ -105,37 +110,28 @@ public class ServiceLocator : MonoBehaviour
     /// </summary>
     public void Remove(Type bindingType)
     {
-        if (_serviceBindings.ContainsKey(bindingType))
-        {
-            if (_serviceBindings[bindingType] != null && _serviceBindings[bindingType] is Component component)
-            {
-                Destroy(component);
-            }
+        DestroyComponentService(bindingType);
 
-            _serviceBindings.Remove(bindingType);
-        }
+        _serviceBindings.Remove(bindingType);
     }
-    
+
     /// <summary>
     /// Removes a service binding, does not destroy the concrete instance.
     /// </summary>
     public void RemoveWithoutDestroying(Type bindingType)
     {
-        if (_serviceBindings.ContainsKey(bindingType))
-        {
-            _serviceBindings.Remove(bindingType);
-        }
-    }  
+        _serviceBindings.Remove(bindingType);
+    }
 
     /// <summary>
     /// Adds a concrete type or replaces it, and registers the service binding.
-	/// If it is a MonoBehaviour it will be attached to the service locator.
+    /// If it is a MonoBehaviour it will be attached to the service locator.
     /// </summary>
     /// <returns>The object that was created.</returns>
     private object AddInternal(Type bindingType, Type concreteType)
     {
-        var concreteInstance = concreteType.IsSubclassOf(typeof(Component)) 
-            ? gameObject.AddComponent(concreteType) 
+        var concreteInstance = concreteType.IsSubclassOf(typeof(Component))
+            ? gameObject.AddComponent(concreteType)
             : Activator.CreateInstance(concreteType);
 
         _serviceBindings[bindingType] = concreteInstance;
@@ -147,27 +143,22 @@ public class ServiceLocator : MonoBehaviour
     /// </summary>
     private void AddExistingInternal<T>(Type bindingType, T existing)
     {
-		// Destroy any existing instance of this binding.
-		if (_serviceBindings.ContainsKey(bindingType) && _serviceBindings[bindingType] != null 
-			&& _serviceBindings[bindingType] is Component component) 
-		{
-			Destroy(component);
-		}
+        DestroyComponentService(bindingType);
 
         _serviceBindings[bindingType] = existing;
     }
 
-	public override string ToString()
-	{
-		StringBuilder sb = new StringBuilder();
+    public override string ToString()
+    {
+        StringBuilder sb = new StringBuilder();
 
-		sb.AppendLine("Service Locator");
+        sb.AppendLine("Service Locator");
 
-		foreach (var binding in _serviceBindings) 
-		{
-			sb.Append("  ").Append(binding.Key).Append(" -> ").AppendLine(binding.Value.ToString());
-		}
+        foreach (var binding in _serviceBindings)
+        {
+            sb.Append("  ").Append(binding.Key).Append(" -> ").AppendLine(binding.Value.ToString());
+        }
 
-		return sb.ToString();
-	}
+        return sb.ToString();
+    }
 }
