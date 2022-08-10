@@ -1,12 +1,10 @@
 ﻿# Unity Service Locator
-General purpose, fast, concise implementation of a service locator for Unity, supporting both MonoBehaviours and pure C# classes.
-
 A typical Unity game needs global access to some objects with full control over instantiation time (NO singletons, NO lazy instantiation),
 and readable, lightweight code without "enterprise" bloat (NO dependency injection). We're talking under 200 lines of code.
 
 In addition, this package supports unit testing, interfaces, and scoped containers.
 
-I have been using this pattern in Unity with minimal changes for more than 6 years, in multiple small to medium-sized codebases (400k+ lines, 1-10 developers). It's stupid simple to understand and works great for teams.
+I have been using this pattern in Unity with minimal changes for more than 7 years, in multiple small to medium-sized codebases (400k+ lines, 1-10 developers). It's stupid simple to understand and works great for teams.
 
 ---
 
