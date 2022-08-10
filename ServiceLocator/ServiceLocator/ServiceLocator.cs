@@ -27,14 +27,21 @@ public class ServiceLocator : MonoBehaviour
 
     public object Get(Type t)
     {
-        object concreteObject = null;
+        object instance;
+	
+        _serviceBindings.TryGetValue(t, out instance);
 
-        if (_serviceBindings.ContainsKey(t))
-        {
-            concreteObject = _serviceBindings[t];
-        }
-
-        return concreteObject;
+        return instance;
+    }
+    
+    public bool TryGetComponent(Type t, out Component component)
+    {
+        if (t.IsSubclassOf(typeof(Component))
+	{
+	    return _serviceBindings.TryGetValue(t, out component);
+	}
+	component = null;
+	return false;
     }
 
     /// <summary>
@@ -105,15 +112,13 @@ public class ServiceLocator : MonoBehaviour
     /// </summary>
     public void Remove(Type bindingType)
     {
-        if (_serviceBindings.ContainsKey(bindingType))
+        Component component;
+        if (TryGetComponent(out component)
         {
-            if (_serviceBindings[bindingType] != null && _serviceBindings[bindingType] is Component component)
-            {
-                Destroy(component);
-            }
-
-            _serviceBindings.Remove(bindingType);
+             Destroy(component);
         }
+	
+        _serviceBindings.Remove(bindingType);
     }
     
     /// <summary>
@@ -121,10 +126,7 @@ public class ServiceLocator : MonoBehaviour
     /// </summary>
     public void RemoveWithoutDestroying(Type bindingType)
     {
-        if (_serviceBindings.ContainsKey(bindingType))
-        {
-            _serviceBindings.Remove(bindingType);
-        }
+        _serviceBindings.Remove(bindingType);
     }  
 
     /// <summary>
@@ -147,27 +149,27 @@ public class ServiceLocator : MonoBehaviour
     /// </summary>
     private void AddExistingInternal<T>(Type bindingType, T existing)
     {
-		// Destroy any existing instance of this binding.
-		if (_serviceBindings.ContainsKey(bindingType) && _serviceBindings[bindingType] != null 
-			&& _serviceBindings[bindingType] is Component component) 
-		{
-			Destroy(component);
-		}
+	// Destroy any existing instance of this binding.
+        Component component;
+        if (TryGetComponent(out component)
+        {
+             Destroy(component);
+        }
 
         _serviceBindings[bindingType] = existing;
     }
 
-	public override string ToString()
-	{
-		StringBuilder sb = new StringBuilder();
+    public override string ToString()
+    {
+        StringBuilder sb = new StringBuilder();
 
-		sb.AppendLine("Service Locator");
+        sb.AppendLine("Service Locator");
 
-		foreach (var binding in _serviceBindings) 
-		{
-			sb.Append("  ").Append(binding.Key).Append(" -> ").AppendLine(binding.Value.ToString());
-		}
+        foreach (var binding in _serviceBindings) 
+        {
+            sb.Append("  ").Append(binding.Key).Append(" -> ").AppendLine(binding.Value.ToString());
+        }
 
-		return sb.ToString();
-	}
+        return sb.ToString();
+    }
 }
